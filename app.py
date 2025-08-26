@@ -112,6 +112,3 @@ def submit_poc():
         return 'POC submitted successfully. FLAG: flag{csrf_exploited_with_dynamic_md5_token_and_blank_referer} <a href="/dashboard">Back to Dashboard</a>'
     else:
         return render_template('submit_poc.html', error='Invalid POC. Ensure it includes the username "user", the correct dynamic CSRF token, and "no-referrer" policy.')
-
-if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5000)
