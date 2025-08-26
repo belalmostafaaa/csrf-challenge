@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SecureBank - Submit POC</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body { background-color: #f8f9fa; }
+        .container { max-width: 600px; margin-top: 50px; }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="/dashboard">SecureBank</a>
+        <div class="ml-auto">
+            <a href="/logout" class="btn btn-danger">Logout</a>
+        </div>
+    </nav>
+    <div class="container">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Submit CSRF POC</h4>
+                <p>Submit your CSRF Proof of Concept HTML to exploit the password reset vulnerability and retrieve the flag.</p>
+                {% if error %}
+                <div class="alert alert-danger">{{ error }}</div>
+                {% endif %}
+                <form method="POST" action="/submit_poc">
+                    <div class="form-group">
+                        <label for="poc_html">POC HTML</label>
+                        <textarea class="form-control" id="poc_html" name="poc_html" rows="10" placeholder="Paste your CSRF POC HTML here..." required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">Submit POC</button>
+                </form>
+                <a href="/dashboard" class="btn btn-link mt-3">Back to Dashboard</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
