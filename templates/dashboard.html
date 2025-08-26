@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SecureBank - Dashboard</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body { background-color: #f8f9fa; }
+        .navbar-brand { color: #007bff !important; }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="/dashboard">SecureBank</a>
+        <div class="ml-auto">
+            <a href="/change_password" class="btn btn-secondary mr-2">Change Password</a>
+            <a href="/logout" class="btn btn-danger">Logout</a>
+        </div>
+    </nav>
+    <div class="container mt-4">
+        <h2>Welcome, {{ username }}</h2>
+        <div class="card mb-4">
+            <div class="card-header">Account Summary</div>
+            <div class="card-body">
+                <p><strong>Account Number:</strong> {{ account_number }}</p>
+                <p><strong>Current Balance:</strong> ${{ balance }}</p>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header">Recent Transactions</div>
+            <div class="card-body">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Description</th>
+                            <th>Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for tx in transactions %}
+                        <tr>
+                            <td>{{ tx.date }}</td>
+                            <td>{{ tx.description }}</td>
+                            <td>{{ tx.amount }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
