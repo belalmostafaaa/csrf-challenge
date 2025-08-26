@@ -1,5 +1,4 @@
 from flask import Flask, render_template, request, session, redirect, url_for
-import hashlib
 
 app = Flask(__name__)
 app.secret_key = 'super_secret_key'  # Change this in production, but for challenge it's fine.
@@ -47,8 +46,8 @@ def change_password():
         return redirect(url_for('index'))
     
     if request.method == 'GET':
-        # Predictable CSRF token: MD5 hash of username (vulnerability)
-        csrf_token = hashlib.md5(session['username'].encode()).hexdigest()
+        # Predictable CSRF token: Plaintext username (vulnerability - easy to predict)
+        csrf_token = session['username']
         return render_template('change_password.html', csrf_token=csrf_token)
     
     # POST handling
@@ -60,7 +59,7 @@ def change_password():
     
     # Check CSRF token
     csrf_token = request.form.get('csrf_token')
-    expected_csrf = hashlib.md5(session['username'].encode()).hexdigest()
+    expected_csrf = session['username']
     if csrf_token != expected_csrf:
         return 'Invalid CSRF token'
     
@@ -71,11 +70,22 @@ def change_password():
     
     # Change password (no old password required - additional bad design for exploitability)
     users[session['username']]['password'] = new_pass
-    return 'Password changed successfully. <a href="/dashboard">Back to Dashboard</a>'
+    
+    # Reveal flag only if Referer is blank (indicating likely CSRF exploitation)
+    if not referer:
+        return 'Password changed successfully. FLAG: flag{csrf_exploited_with_predictable_plaintext_token_and_blank_referer} <a href="/dashboard">Back to Dashboard</a>'
+    else:
+        return 'Password changed successfully. <a href="/dashboard">Back to Dashboard</a>'
 
 @app.route('/logout')
 def logout():
     session.pop('username', None)
+    return redirect(url_for('index'))
+
+@app.route('/reset_password')
+def reset_password():
+    # Reset password to default for shared user (to allow multiple participants)
+    users['user']['password'] = 'password'
     return redirect(url_for('index'))
 
 if __name__ == '__main__':
