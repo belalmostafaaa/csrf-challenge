@@ -3,12 +3,12 @@ import hashlib
 import time
 
 app = Flask(__name__)
-app.secret_key = 'super_secret_key'  # Change this in production, but for challenge it's fine.
+app.secret_key = 'super_secret_key'
 
-# Static user data (participants use username: 'user', password: 'password')
+
 users = {
     'user': {
-        'password': 'password',  # Fixed password, never changes
+        'password': 'password',
         'balance': 1000,
         'account_number': '1234-5678-9012',
         'recent_transactions': [
@@ -48,18 +48,18 @@ def change_password():
         return redirect(url_for('index'))
     
     if request.method == 'GET':
-        # Predictable but dynamic CSRF token: MD5 of username + current timestamp
+     
         csrf_token = hashlib.md5((session['username'] + str(int(time.time()))).encode()).hexdigest()
-        session['csrf_token'] = csrf_token  # Store in session to validate later
+        session['csrf_token'] = csrf_token 
         return render_template('change_password.html', csrf_token=csrf_token)
     
-    # POST handling
+
     referer = request.headers.get('Referer', '')
-    host = request.host_url[:-1]  # Remove trailing slash
+    host = request.host_url[:-1]
     if referer and not referer.startswith(host):
         return 'Invalid Referer'
+
     
-    # Check CSRF token
     csrf_token = request.form.get('csrf_token')
     expected_csrf = session.get('csrf_token')
     if csrf_token != expected_csrf:
@@ -70,10 +70,10 @@ def change_password():
     if new_pass != confirm:
         return render_template('change_password.html', csrf_token=expected_csrf, error='Passwords do not match')
     
-    # Simulate password change without altering the actual password
-    session['password_changed'] = True  # Flag to indicate successful POC
+   
+    session['password_changed'] = True 
     
-    # Reveal flag if exploited via CSRF (blank Referer)
+
     if not referer:
         return 'Password change simulated successfully. FLAG: flag{csrf_exploited_with_dynamic_md5_token_and_blank_referer} <a href="/dashboard">Back to Dashboard</a>'
     return 'Password change simulated successfully. <a href="/dashboard">Back to Dashboard</a>'
@@ -82,12 +82,12 @@ def change_password():
 def logout():
     session.pop('username', None)
     session.pop('csrf_token', None)
-    session.pop('password_changed', None)  # Clear change flag on logout
+    session.pop('password_changed', None) 
     return redirect(url_for('index'))
 
 @app.route('/reset_password')
 def reset_password():
-    session.pop('password_changed', None)  # Reset the change flag
+    session.pop('password_changed', None) 
     return redirect(url_for('index'))
 
 @app.route('/submit_poc', methods=['GET', 'POST'])
@@ -98,15 +98,15 @@ def submit_poc():
     if request.method == 'GET':
         return render_template('submit_poc.html')
     
-    # POST handling: Process submitted POC
+
     poc_html = request.form.get('poc_html')
     if not poc_html:
         return render_template('submit_poc.html', error='Please provide a POC HTML.')
     
-    # Simulate CSRF token generation for the current request
+
     current_token = hashlib.md5((session['username'] + str(int(time.time()))).encode()).hexdigest()
     
-    # Simple validation: Check if the POC contains a form with the correct token
+
     if 'user' in poc_html and current_token in poc_html and 'no-referrer' in poc_html.lower():
         session['password_changed'] = True
         return 'POC submitted successfully. FLAG: flag{csrf_exploited_with_dynamic_md5_token_and_blank_referer} <a href="/dashboard">Back to Dashboard</a>'
