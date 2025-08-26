@@ -1,0 +1,2 @@
+flask==3.0.3  # Or latest version; your app uses Flask
+gunicorn==23.0.0  # Production server; replaces Flask's dev server
