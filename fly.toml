@@ -1,24 +1,24 @@
-# fly.toml file generated for online-bank on 2025-08-26T05:00:00Z
+
 app = "online-bank"
-primary_region = "lax"  # You can change this to another region (e.g., "ams" for Amsterdam) if needed
+primary_region = "lax" 
 
 [build]
   dockerfile = "Dockerfile"
 
 [http_service]
-  internal_port = 8080  # Must match the port Gunicorn binds to in the Dockerfile
+  internal_port = 8080 
   force_https = true
-  auto_stop_machines = false  # Keep machines running (free tier allows 3x256MB VMs)
+  auto_stop_machines = false
   auto_start_machines = true
-  min_machines_running = 1    # Ensure at least one instance is always running
+  min_machines_running = 1
   [http_service.concurrency]
     type = "requests"
     hard_limit = 25
-    soft_limit = 20  # Limits concurrent requests to prevent overload on free tier
+    soft_limit = 20
 
 [[services]]
   protocol = "tcp"
-  internal_port = 8080  # Redundant with [http_service] but included for clarity
+  internal_port = 8080
 
   [[services.ports]]
     port = 80
